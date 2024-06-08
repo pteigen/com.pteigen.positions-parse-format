@@ -9,3 +9,8 @@ export type ParseSingleResult = {
 } | {
     isValid: false
 }
+
+export enum PositionFormat {
+    UTM,
+    MGRS
+}
