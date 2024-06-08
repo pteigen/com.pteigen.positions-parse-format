@@ -1,0 +1,24 @@
+{
+  "name": "positions-parse-format",
+  "version": "1.0.1",
+  "description": "Print position formats from lat/lon and parse those formats into lat/lon",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pteigen/com.pteigen.positions-parse-format.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pteigen/com.pteigen.positions-parse-format/issues"
+  },
+  "homepage": "https://github.com/pteigen/com.pteigen.positions-parse-format#readme",
+  "dependencies": {
+    "typescript": "^5.4.5"
+  }
+}
