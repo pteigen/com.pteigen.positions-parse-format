@@ -52,4 +52,5 @@ test("utmzone 80 45", () => {
 test("northing - 1", () => {
   const utm = toUtm({ lat: 45, lon: 10 });
   expect(utm.northing).toBe(4983436);
+  expect(utm.easting).toBe(578815);
 });

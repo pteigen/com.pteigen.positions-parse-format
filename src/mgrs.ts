@@ -12,13 +12,13 @@ export function mgrsDesignator(
   utmNorthing: number,
   utmEasting: number
 ): string {
-  const eastingIndex = Math.floor(utmEasting / 100000) % 8;
+  const eastingIndex = Math.floor(utmEasting / 100000);
   let northingIndex = Math.floor(utmNorthing / 100000);
   if (utmZone % 2 === 0) {
     northingIndex += 5;
   }
 
-  const eastingLetter = letters.charAt((utmZone * 8 + eastingIndex) % 24);
+  const eastingLetter = letters.charAt(eastingIndex % 24);
   const northingLetter = letters.charAt(northingIndex % 20);
   return eastingLetter + northingLetter;
 }
