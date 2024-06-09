@@ -4,7 +4,7 @@ import { Coordinates } from "./types";
 const utmZonesNorth: string = "NPQRSTUVWXX";
 const utmZonesSouth: string = "MLKJHGFEDC";
 
-interface Utm {
+export interface Utm {
   zoneChar: string;
   zoneNumber: number;
   easting: number;
