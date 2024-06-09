@@ -1,10 +1,3 @@
-import {parseString} from "./positionParser";
+import { toPositionString } from "./src/positionParser";
 
-function add(x: number, y: number): number {
-    return x + y;
-}
-
-export {
-    add,
-    parseString
-}
+export { toPositionString };
