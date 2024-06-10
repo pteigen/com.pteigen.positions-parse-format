@@ -1,15 +1,10 @@
-import { Coordinates } from "./types";
+import { Coordinates, Utm } from "./types";
 import { degreesToRadians } from "./geo";
 
 const utmZonesNorth: string = "NPQRSTUVWXX";
 const utmZonesSouth: string = "MLKJHGFEDC";
 
-export interface Utm {
-  zoneChar: string;
-  zoneNumber: number;
-  easting: number;
-  northing: number;
-}
+
 
 export function utmZone(
   coordinates: Coordinates

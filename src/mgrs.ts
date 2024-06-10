@@ -1,25 +1,27 @@
-import { Coordinates } from "./types";
-import { toUtm, Utm } from "./utm";
+import { Coordinates, Mgrs } from "./types";
+import { toUtm } from "./utm";
 
 const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 
-type Mgrs = Utm & {
-  designator: string;
-};
+
 
 export function mgrsDesignator(
   utmZone: number,
   utmNorthing: number,
   utmEasting: number
 ): string {
-  const eastingIndex = Math.floor(utmEasting / 100000);
   let northingIndex = Math.floor(utmNorthing / 100000);
   if (utmZone % 2 === 0) {
     northingIndex += 5;
   }
 
-  const eastingLetter = letters.charAt(eastingIndex % 24);
   const northingLetter = letters.charAt(northingIndex % 20);
+
+  const eastingNoCorrection = Math.floor(utmEasting / 100000);
+  const eastingIndex = eastingNoCorrection + (utmZone % 3 === 1 ? 0 : utmZone % 3 === 2 ? 8 : 16) - 1;
+
+  const eastingLetter = letters.charAt(eastingIndex % 24);
+  
   return eastingLetter + northingLetter;
 }
 

@@ -14,3 +14,14 @@ export enum PositionFormat {
     UTM,
     MGRS
 }
+
+export interface Utm {
+    zoneChar: string;
+    zoneNumber: number;
+    easting: number;
+    northing: number;
+}
+
+export type Mgrs = Utm & {
+    designator: string;
+};

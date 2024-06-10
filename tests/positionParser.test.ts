@@ -18,3 +18,9 @@ test("MGRS North East - even", () => {
     toPositionString({ lat: 51.871618, lon: 6.908311 }, PositionFormat.MGRS)
   ).toEqual("32U LC 56001 48827");
 });
+
+test("MGRS North West - even", () => {
+  expect(
+    toPositionString({ lat: 48.221628, lon: -120.215209 }, PositionFormat.MGRS)
+  ).toEqual("10U GU 06832 44683");
+});

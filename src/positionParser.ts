@@ -8,6 +8,10 @@ export function parsePositionString(input: string): ParseSingleResult {
   };
 }
 
+function padLeftWithZero(input: number): string {
+  return input.toString().padStart(5, '0');
+}
+
 export function toPositionString(
   coordinates: Coordinates,
   format: PositionFormat
@@ -21,8 +25,8 @@ export function toPositionString(
   if (format === PositionFormat.MGRS) {
     const mgrs = toMgrs(coordinates);
     return `${mgrs.zoneNumber}${mgrs.zoneChar} ${mgrs.designator} ${
-      mgrs.easting % 100000
-    } ${mgrs.northing % 100000}`;
+      padLeftWithZero(mgrs.easting % 100000)
+    } ${padLeftWithZero(mgrs.northing % 100000)}`;
   }
   return "Not implemented!";
 }
