@@ -16,7 +16,9 @@ export function mgrsDesignator(
   }
 
   const northingLetter = letters.charAt(northingIndex % 20);
+  console.log({utmNorthing, northingIndex, northingLetter});
 
+  
   const eastingNoCorrection = Math.floor(utmEasting / 100000);
   const eastingIndex = eastingNoCorrection + (utmZone % 3 === 1 ? 0 : utmZone % 3 === 2 ? 8 : 16) - 1;
 
@@ -44,7 +46,12 @@ export function toLatLon(zoneNumber: number, zoneChar: string, twoLetterDesignat
   const indexOfNorthingLetter = letters.indexOf(northingLetter);
   const numDesignatorNorthing = (indexOfNorthingLetter + 20 - (zoneNumber % 2 === 0 ? 5 : 0)) % 20;
   console.log("numDesignatorNorthing = " + numDesignatorNorthing)
-  const northing = numDesignatorNorthing * 100000 + mgrsNorthing + getMinNorthing(zoneChar);
+
+  const minNorthing = getMinNorthing(zoneChar);
+  let northing = numDesignatorNorthing * 100000 + mgrsNorthing;
+  while(northing < minNorthing) {
+    northing += 2_000_000;
+  }
 
   console.log(northing);
 
