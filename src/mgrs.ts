@@ -37,3 +37,93 @@ export function toMgrs(coordinate: Coordinates): Mgrs {
     designator: rowDesignator,
   };
 }
+
+export function toLatLon(zoneNumber: number, zoneChar: string, twoLetterDesignator: string, mgrsEasting: number, mgrsNorthing: number) : number {
+  const northingLetter = twoLetterDesignator.charAt(1);
+  console.log("northingLetter = " + northingLetter)
+  const indexOfNorthingLetter = letters.indexOf(northingLetter);
+  const numDesignatorNorthing = (indexOfNorthingLetter + 20 - (zoneNumber % 2 === 0 ? 5 : 0)) % 20;
+  console.log("numDesignatorNorthing = " + numDesignatorNorthing)
+  const northing = numDesignatorNorthing * 100000 + mgrsNorthing + getMinNorthing(zoneChar);
+
+  console.log(northing);
+
+
+  return northing;
+}
+
+
+function getMinNorthing(zoneLetter: string) {
+  let northing;
+  switch (zoneLetter) {
+  case 'C':
+    northing = 1100000;
+    break;
+  case 'D':
+    northing = 2000000;
+    break;
+  case 'E':
+    northing = 2800000;
+    break;
+  case 'F':
+    northing = 3700000;
+    break;
+  case 'G':
+    northing = 4600000;
+    break;
+  case 'H':
+    northing = 5500000;
+    break;
+  case 'J':
+    northing = 6400000;
+    break;
+  case 'K':
+    northing = 7300000;
+    break;
+  case 'L':
+    northing = 8200000;
+    break;
+  case 'M':
+    northing = 9100000;
+    break;
+  case 'N':
+    northing = 0;
+    break;
+  case 'P':
+    northing = 800000;
+    break;
+  case 'Q':
+    northing = 1700000;
+    break;
+  case 'R':
+    northing = 2600000;
+    break;
+  case 'S':
+    northing = 3500000;
+    break;
+  case 'T':
+    northing = 4400000;
+    break;
+  case 'U':
+    northing = 5300000;
+    break;
+  case 'V':
+    northing = 6200000;
+    break;
+  case 'W':
+    northing = 7000000;
+    break;
+  case 'X':
+    northing = 7900000;
+    break;
+  default:
+    northing = -1;
+  }
+  if (northing >= 0) {
+    return northing;
+  }
+  else {
+    throw new TypeError(`Invalid zone letter: ${zoneLetter}`);
+  }
+
+}
