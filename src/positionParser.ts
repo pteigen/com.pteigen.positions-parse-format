@@ -1,15 +1,15 @@
-import { Coordinates, ParseSingleResult, PositionFormat } from "./types";
+import { Coordinates, PositionFormat } from "./types";
 import { toUtm } from "./utm";
 import { toMgrs } from "./mgrs";
 
-export function parsePositionString(input: string): ParseSingleResult {
-  return {
-    isValid: false,
-  };
-}
+// export function parsePositionString(input: string): ParseSingleResult {
+//   return {
+//     isValid: false,
+//   };
+// }
 
 function padLeftWithZero(input: number): string {
-  return input.toString().padStart(5, '0');
+  return input.toString().padStart(5, "0");
 }
 
 export function toPositionString(
@@ -24,9 +24,9 @@ export function toPositionString(
 
   if (format === PositionFormat.MGRS) {
     const mgrs = toMgrs(coordinates);
-    return `${mgrs.zoneNumber}${mgrs.zoneChar} ${mgrs.designator} ${
-      padLeftWithZero(mgrs.easting % 100000)
-    } ${padLeftWithZero(mgrs.northing % 100000)}`;
+    return `${mgrs.zoneNumber}${mgrs.zoneChar} ${
+      mgrs.designator
+    } ${padLeftWithZero(mgrs.easting)} ${padLeftWithZero(mgrs.northing)}`;
   }
   return "Not implemented!";
 }

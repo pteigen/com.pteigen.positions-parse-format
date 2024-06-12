@@ -4,15 +4,15 @@ import { degreesToRadians } from "./geo";
 const utmZonesNorth: string = "NPQRSTUVWXX";
 const utmZonesSouth: string = "MLKJHGFEDC";
 
-
-
 export function utmZone(
   coordinates: Coordinates
 ): Pick<Utm, "zoneNumber" | "zoneChar"> {
   const utmCharIndex = Math.floor(Math.abs(coordinates.lat) / 8);
   const utmChar =
     coordinates.lat >= 84
-      ? "Z"
+      ? coordinates.lon < 0
+        ? "Y"
+        : "Z"
       : coordinates.lat >= 0
       ? utmZonesNorth.charAt(utmCharIndex)
       : utmZonesSouth.charAt(utmCharIndex);
