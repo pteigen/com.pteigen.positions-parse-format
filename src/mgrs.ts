@@ -3,6 +3,10 @@ import { toUtm } from "./utm";
 
 const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 
+function zoneOffsetForEasting(zoneNumber: number) : number {
+  return (zoneNumber % 3 === 1 ? 0 : zoneNumber % 3 === 2 ? 8 : 16);
+}
+
 export function mgrsDesignator(
   utmZone: number,
   utmNorthing: number,
@@ -14,13 +18,9 @@ export function mgrsDesignator(
   }
 
   const northingLetter = letters.charAt(northingIndex % 20);
-  console.log({ utmNorthing, northingIndex, northingLetter });
 
   const eastingNoCorrection = Math.floor(utmEasting / 100000);
-  const eastingIndex =
-    eastingNoCorrection +
-    (utmZone % 3 === 1 ? 0 : utmZone % 3 === 2 ? 8 : 16) -
-    1;
+  const eastingIndex = eastingNoCorrection + zoneOffsetForEasting(utmZone) - 1;
 
   const eastingLetter = letters.charAt(eastingIndex % 24);
 
@@ -44,11 +44,9 @@ export function toMgrs(coordinate: Coordinates): Mgrs {
 
 export function mgrsToUtm(mgrs: Mgrs): Utm {
   const northingLetter = mgrs.designator.charAt(1);
-  console.log("northingLetter = " + northingLetter);
   const indexOfNorthingLetter = letters.indexOf(northingLetter);
   const numDesignatorNorthing =
     (indexOfNorthingLetter + 20 - (mgrs.zoneNumber % 2 === 0 ? 5 : 0)) % 20;
-  console.log("numDesignatorNorthing = " + numDesignatorNorthing);
 
   const minNorthing = getMinNorthing(mgrs.zoneChar);
   let northing = numDesignatorNorthing * 100000 + mgrs.northing;
@@ -56,11 +54,13 @@ export function mgrsToUtm(mgrs: Mgrs): Utm {
     northing += 2_000_000;
   }
 
-  console.log(northing);
+  const eastingZoneDiffs = (letters.indexOf(mgrs.designator.charAt(0)) + letters.length - zoneOffsetForEasting(mgrs.zoneNumber)) % letters.length;
+  const easting = (eastingZoneDiffs + 1) * 100000 + mgrs.easting;
 
   return {
     ...mgrs,
     northing,
+    easting
   };
 }
 

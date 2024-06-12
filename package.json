@@ -1,11 +1,12 @@
 {
   "name": "positions-parse-format",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Print position formats from lat/lon and parse those formats into lat/lon. Under development..",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
+    "buildnoclean": "tsc",
     "build": "rm -rf ./dist && tsc"
   },
   "repository": {

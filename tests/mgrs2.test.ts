@@ -9,7 +9,7 @@ test("MGRS South West", () => {
   expect(actual.northing).toEqual(5771);
 });
 
-test("mgrs to coord - southwest", () => {
+test("mgrs to coord - south west", () => {
   const utm = mgrsToUtm({
     zoneNumber: 21,
     zoneChar: "K",
@@ -17,6 +17,30 @@ test("mgrs to coord - southwest", () => {
     easting: 2730,
     northing: 25297,
   });
-  expect(utm.northing).toEqual(8025297);
   expect(utm.easting).toEqual(202730);
+  expect(utm.northing).toEqual(8025297);
+});
+
+test("mgrs to coord - north east", () => {
+  const utm = mgrsToUtm({
+    zoneNumber: 35,
+    zoneChar: "X",
+    designator: "PB",
+    easting: 76142,
+    northing: 90811,
+  });
+  expect(utm.easting).toEqual(676142);
+  expect(utm.northing).toEqual(8190811);
+});
+
+test("mgrs to coord - north west", () => {
+  const utm = mgrsToUtm({
+    zoneNumber: 6,
+    zoneChar: "W",
+    designator: "WD",
+    easting: 19323,
+    northing: 56338,
+  });
+  expect(utm.easting).toEqual(519323);
+  expect(utm.northing).toEqual(7856338);
 });
