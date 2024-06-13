@@ -1,3 +1,3 @@
-import { toPositionString } from "./src/positionParser";
+import { toPositionString } from "./src/positionFormatter";
 
 export { toPositionString };

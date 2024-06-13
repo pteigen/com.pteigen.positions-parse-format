@@ -1,12 +1,13 @@
-import { mgrsToUtm, toMgrs } from "../src/mgrs";
+import { mgrsToUtm, toLatLon, toMgrs } from "../src/mgrs";
+import { roundToNumDecimals } from "../src/util";
 
 test("MGRS South West", () => {
   const actual = toMgrs({ lat: -43.27534, lon: -162.583051 });
   expect(actual.zoneChar).toEqual("G");
   expect(actual.zoneNumber).toEqual(3);
   expect(actual.designator).toEqual("XN");
-  expect(actual.easting).toEqual(96123);
-  expect(actual.northing).toEqual(5771);
+  expect(Math.floor(actual.easting)).toEqual(96123);
+  expect(Math.floor(actual.northing)).toEqual(5771);
 });
 
 test("mgrs to coord - south west", () => {
@@ -55,4 +56,21 @@ test("mgrs to coord - south east", () => {
   });
   expect(utm.easting).toEqual(478440);
   expect(utm.northing).toEqual(5141717);
+});
+
+test("MGRS to and from - many positions", () => {
+  for (let lon = -179.999123; lon < 179.999123; lon += 0.267123) {
+    for (let lat = -70.999123; lon < 70.999123; lon += 0.267123) {
+      const mgrs = toMgrs({ lat, lon });
+
+      const coordinates = toLatLon(mgrs);
+
+      expect(roundToNumDecimals(coordinates.lat, 6)).toBe(
+        roundToNumDecimals(lat, 6)
+      );
+      expect(roundToNumDecimals(coordinates.lon, 6) + 0.1).toBe(
+        roundToNumDecimals(lon, 6) + 0.1
+      );
+    }
+  }
 });

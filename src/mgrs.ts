@@ -1,5 +1,5 @@
 import { Coordinates, Mgrs, Utm } from "./types";
-import { toUtm } from "./utm";
+import { toUtm, utmToLatLon } from "./utm";
 
 const DesignatorLetters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 
@@ -60,6 +60,10 @@ export function mgrsToUtm(mgrs: Mgrs): Utm {
   };
 }
 
+export function toLatLon(mgrs: Mgrs): Coordinates {
+  const utm = mgrsToUtm(mgrs);
+  return utmToLatLon(utm);
+}
 function getMinNorthing(zoneLetter: string) {
   if (zoneLetter === "C") {
     return 1100000;

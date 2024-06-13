@@ -1,5 +1,5 @@
 import { Coordinates, Utm } from "./types";
-import { degreesToRadians } from "./geo";
+import { degreesToRadians, radiansToDegrees } from "./geo";
 
 const utmZonesNorth: string = "NPQRSTUVWXX";
 const utmZonesSouth: string = "MLKJHGFEDC";
@@ -130,8 +130,8 @@ export function utmCoordinates(
     northing += NORTHING_OFFFSET;
   }
   return {
-    easting: Math.floor(easting),
-    northing: Math.floor(northing),
+    easting: easting,
+    northing: northing,
   };
 }
 
@@ -139,4 +139,97 @@ export function toUtm(coordinates: Coordinates): Utm {
   const zone = utmZone(coordinates);
   const utmCoords = utmCoordinates(coordinates, zone.zoneNumber);
   return { ...zone, ...utmCoords };
+}
+
+export function utmToLatLon(utm: Utm): Coordinates {
+  const UTMNorthing = utm.northing;
+  const UTMEasting = utm.easting;
+  const { zoneChar, zoneNumber } = utm;
+
+  const e1 =
+    (1 - Math.sqrt(1 - eccentricitySquared)) /
+    (1 + Math.sqrt(1 - eccentricitySquared));
+
+  // remove 500,000 meter offset for longitude
+  const x = UTMEasting - EASTING_OFFSET;
+  let y = UTMNorthing;
+
+  // We must know somehow if we are in the Northern or Southern
+  // hemisphere, this is the only time we use the letter So even
+  // if the Zone letter isn't exactly correct it should indicate
+  // the hemisphere correctly
+  if (utmZonesSouth.indexOf(zoneChar) >= 0) {
+    y -= NORTHING_OFFFSET; // remove offset used for southern hemisphere
+  }
+
+  // +HALF_UTM_ZONE_WIDTH puts origin in middle of zone
+  const LongOrigin =
+    (zoneNumber - 1) * UTM_ZONE_WIDTH - 180 + UTM_ZONE_WIDTH / 2;
+
+  const eccPrimeSquared = eccentricitySquared / (1 - eccentricitySquared);
+
+  const M = y / SCALE_FACTOR;
+  const mu =
+    M /
+    (SEMI_MAJOR_AXIS *
+      (1 -
+        eccentricitySquared / 4 -
+        (3 * eccentricitySquared * eccentricitySquared) / 64 -
+        (5 * eccentricitySquared * eccentricitySquared * eccentricitySquared) /
+          256));
+
+  const phi1Rad =
+    mu +
+    ((3 * e1) / 2 - (27 * e1 * e1 * e1) / 32) * Math.sin(2 * mu) +
+    ((21 * e1 * e1) / 16 - (55 * e1 * e1 * e1 * e1) / 32) * Math.sin(4 * mu) +
+    ((151 * e1 * e1 * e1) / 96) * Math.sin(6 * mu);
+  // double phi1 = ProjMath.radiansToDegrees(phi1Rad);
+
+  const N1 =
+    SEMI_MAJOR_AXIS /
+    Math.sqrt(1 - eccentricitySquared * Math.sin(phi1Rad) * Math.sin(phi1Rad));
+  const T1 = Math.tan(phi1Rad) * Math.tan(phi1Rad);
+  const C1 = eccPrimeSquared * Math.cos(phi1Rad) * Math.cos(phi1Rad);
+  const R1 =
+    (SEMI_MAJOR_AXIS * (1 - eccentricitySquared)) /
+    Math.pow(
+      1 - eccentricitySquared * Math.sin(phi1Rad) * Math.sin(phi1Rad),
+      1.5
+    );
+  const D = x / (N1 * SCALE_FACTOR);
+
+  let lat =
+    phi1Rad -
+    ((N1 * Math.tan(phi1Rad)) / R1) *
+      (Math.pow(D, 2) / 2 -
+        ((5 + 3 * T1 + 10 * C1 - 4 * Math.pow(C1, 2) - 9 * eccPrimeSquared) *
+          Math.pow(D, 4)) /
+          24 +
+        ((61 +
+          90 * T1 +
+          298 * C1 +
+          45 * Math.pow(T1, 2) -
+          252 * eccPrimeSquared -
+          3 * Math.pow(C1, 2)) *
+          Math.pow(D, 6)) /
+          720);
+  lat = radiansToDegrees(lat);
+
+  let lon =
+    (D -
+      ((1 + 2 * T1 + C1) * Math.pow(D, 3)) / 6 +
+      ((5 -
+        2 * C1 +
+        28 * T1 -
+        3 * C1 * C1 +
+        8 * eccPrimeSquared +
+        24 * T1 * T1) *
+        Math.pow(D, 5)) /
+        120) /
+    Math.cos(phi1Rad);
+  lon = LongOrigin + radiansToDegrees(lon);
+  return {
+    lat,
+    lon,
+  };
 }

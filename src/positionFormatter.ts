@@ -19,14 +19,18 @@ export function toPositionString(
   if (format === PositionFormat.UTM) {
     const utm = toUtm(coordinates);
 
-    return `${utm.zoneNumber}${utm.zoneChar} ${utm.easting} ${utm.northing}`;
+    return `${utm.zoneNumber}${utm.zoneChar} ${Math.floor(
+      utm.easting
+    )} ${Math.floor(utm.northing)}`;
   }
 
   if (format === PositionFormat.MGRS) {
     const mgrs = toMgrs(coordinates);
     return `${mgrs.zoneNumber}${mgrs.zoneChar} ${
       mgrs.designator
-    } ${padLeftWithZero(mgrs.easting)} ${padLeftWithZero(mgrs.northing)}`;
+    } ${padLeftWithZero(Math.floor(mgrs.easting))} ${padLeftWithZero(
+      Math.floor(mgrs.northing)
+    )}`;
   }
   return "Not implemented!";
 }
