@@ -1,39 +1,32 @@
 import { Coordinates, Mgrs, Utm } from "./types";
 import { toUtm } from "./utm";
 
-const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+const DesignatorLetters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 
-function zoneOffsetForEasting(zoneNumber: number) : number {
-  return (zoneNumber % 3 === 1 ? 0 : zoneNumber % 3 === 2 ? 8 : 16);
+function zoneOffsetForEasting(zoneNumber: number): number {
+  return zoneNumber % 3 === 1 ? 0 : zoneNumber % 3 === 2 ? 8 : 16;
 }
 
-export function mgrsDesignator(
-  utmZone: number,
-  utmNorthing: number,
-  utmEasting: number
-): string {
-  let northingIndex = Math.floor(utmNorthing / 100000);
-  if (utmZone % 2 === 0) {
+export function mgrsDesignator(utm: Omit<Utm, "zoneChar">): string {
+  let northingIndex = Math.floor(utm.northing / 100000);
+  if (utm.zoneNumber % 2 === 0) {
     northingIndex += 5;
   }
 
-  const northingLetter = letters.charAt(northingIndex % 20);
+  const northingLetter = DesignatorLetters.charAt(northingIndex % 20);
 
-  const eastingNoCorrection = Math.floor(utmEasting / 100000);
-  const eastingIndex = eastingNoCorrection + zoneOffsetForEasting(utmZone) - 1;
+  const eastingNoCorrection = Math.floor(utm.easting / 100000);
+  const eastingIndex =
+    eastingNoCorrection + zoneOffsetForEasting(utm.zoneNumber) - 1;
 
-  const eastingLetter = letters.charAt(eastingIndex % 24);
+  const eastingLetter = DesignatorLetters.charAt(eastingIndex % 24);
 
   return eastingLetter + northingLetter;
 }
 
 export function toMgrs(coordinate: Coordinates): Mgrs {
   const utm = toUtm(coordinate);
-  const rowDesignator = mgrsDesignator(
-    utm.zoneNumber,
-    utm.northing,
-    utm.easting
-  );
+  const rowDesignator = mgrsDesignator(utm);
   return {
     ...utm,
     northing: utm.northing % 100000,
@@ -44,94 +37,70 @@ export function toMgrs(coordinate: Coordinates): Mgrs {
 
 export function mgrsToUtm(mgrs: Mgrs): Utm {
   const northingLetter = mgrs.designator.charAt(1);
-  const indexOfNorthingLetter = letters.indexOf(northingLetter);
+  const indexOfNorthingLetter = DesignatorLetters.indexOf(northingLetter);
   const numDesignatorNorthing =
     (indexOfNorthingLetter + 20 - (mgrs.zoneNumber % 2 === 0 ? 5 : 0)) % 20;
 
   const minNorthing = getMinNorthing(mgrs.zoneChar);
   let northing = numDesignatorNorthing * 100000 + mgrs.northing;
-  while (northing < minNorthing) {
-    northing += 2_000_000;
-  }
+  northing =
+    northing + Math.round((minNorthing - northing) / 2_000_000) * 2_000_000;
 
-  const eastingZoneDiffs = (letters.indexOf(mgrs.designator.charAt(0)) + letters.length - zoneOffsetForEasting(mgrs.zoneNumber)) % letters.length;
+  const eastingZoneDiffs =
+    (DesignatorLetters.indexOf(mgrs.designator.charAt(0)) +
+      DesignatorLetters.length -
+      zoneOffsetForEasting(mgrs.zoneNumber)) %
+    DesignatorLetters.length;
   const easting = (eastingZoneDiffs + 1) * 100000 + mgrs.easting;
 
   return {
     ...mgrs,
     northing,
-    easting
+    easting,
   };
 }
 
 function getMinNorthing(zoneLetter: string) {
-  let northing;
-  switch (zoneLetter) {
-    case "C":
-      northing = 1100000;
-      break;
-    case "D":
-      northing = 2000000;
-      break;
-    case "E":
-      northing = 2800000;
-      break;
-    case "F":
-      northing = 3700000;
-      break;
-    case "G":
-      northing = 4600000;
-      break;
-    case "H":
-      northing = 5500000;
-      break;
-    case "J":
-      northing = 6400000;
-      break;
-    case "K":
-      northing = 7300000;
-      break;
-    case "L":
-      northing = 8200000;
-      break;
-    case "M":
-      northing = 9100000;
-      break;
-    case "N":
-      northing = 0;
-      break;
-    case "P":
-      northing = 800000;
-      break;
-    case "Q":
-      northing = 1700000;
-      break;
-    case "R":
-      northing = 2600000;
-      break;
-    case "S":
-      northing = 3500000;
-      break;
-    case "T":
-      northing = 4400000;
-      break;
-    case "U":
-      northing = 5300000;
-      break;
-    case "V":
-      northing = 6200000;
-      break;
-    case "W":
-      northing = 7000000;
-      break;
-    case "X":
-      northing = 7900000;
-      break;
-    default:
-      northing = -1;
-  }
-  if (northing >= 0) {
-    return northing;
+  if (zoneLetter === "C") {
+    return 1100000;
+  } else if (zoneLetter === "D") {
+    return 2000000;
+  } else if (zoneLetter === "E") {
+    return 2800000;
+  } else if (zoneLetter === "F") {
+    return 3700000;
+  } else if (zoneLetter === "G") {
+    return 4600000;
+  } else if (zoneLetter === "H") {
+    return 5500000;
+  } else if (zoneLetter === "J") {
+    return 6400000;
+  } else if (zoneLetter === "K") {
+    return 7300000;
+  } else if (zoneLetter === "L") {
+    return 8200000;
+  } else if (zoneLetter === "M") {
+    return 9100000;
+  } else if (zoneLetter === "N") {
+    return 0;
+  } else if (zoneLetter === "P") {
+    return 800000;
+  } else if (zoneLetter === "Q") {
+    return 1700000;
+  } else if (zoneLetter === "R") {
+    return 2600000;
+  } else if (zoneLetter === "S") {
+    return 3500000;
+  } else if (zoneLetter === "T") {
+    return 4400000;
+  } else if (zoneLetter === "U") {
+    return 5300000;
+  } else if (zoneLetter === "V") {
+    return 6200000;
+  } else if (zoneLetter === "W") {
+    return 7000000;
+  } else if (zoneLetter === "X") {
+    return 7900000;
   } else {
     throw new TypeError(`Invalid zone letter: ${zoneLetter}`);
   }

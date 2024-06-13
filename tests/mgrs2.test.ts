@@ -44,3 +44,15 @@ test("mgrs to coord - north west", () => {
   expect(utm.easting).toEqual(519323);
   expect(utm.northing).toEqual(7856338);
 });
+
+test("mgrs to coord - south east", () => {
+  const utm = mgrsToUtm({
+    zoneNumber: 59,
+    zoneChar: "G",
+    designator: "MM",
+    easting: 78440,
+    northing: 41717,
+  });
+  expect(utm.easting).toEqual(478440);
+  expect(utm.northing).toEqual(5141717);
+});
