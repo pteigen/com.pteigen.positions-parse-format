@@ -2,12 +2,6 @@ import { Coordinates, PositionFormat } from "./types";
 import { toUtm } from "./utm";
 import { toMgrs } from "./mgrs";
 
-// export function parsePositionString(input: string): ParseSingleResult {
-//   return {
-//     isValid: false,
-//   };
-// }
-
 function padLeftWithZero(input: number): string {
   return input.toString().padStart(5, "0");
 }

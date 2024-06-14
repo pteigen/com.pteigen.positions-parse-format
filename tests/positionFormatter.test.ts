@@ -7,6 +7,12 @@ test("UTM North East", () => {
   ).toEqual("33V 354432 6556572");
 });
 
+test("MGRS Case", () => {
+  expect(
+    toPositionString({ lat: -20.103542, lon: 48.188505 }, PositionFormat.MGRS)
+  ).toEqual("39K TT 06004 74579");
+});
+
 test("MGRS North East - odd", () => {
   expect(
     toPositionString({ lat: 59.123456, lon: 12.456789 }, PositionFormat.MGRS)
