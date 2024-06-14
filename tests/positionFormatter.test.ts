@@ -1,4 +1,4 @@
-import { toPositionString } from "../src/positionFormatter";
+import { toPositionString } from "../src";
 import { PositionFormat } from "../src/types";
 
 test("UTM North East", () => {

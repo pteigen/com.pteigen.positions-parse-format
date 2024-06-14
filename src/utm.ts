@@ -4,6 +4,17 @@ import { degreesToRadians, radiansToDegrees } from "./geo";
 const utmZonesNorth: string = "NPQRSTUVWXX";
 const utmZonesSouth: string = "MLKJHGFEDC";
 
+export function getUtmRegExp(): string {
+  return (
+    "^(\\d{1,2})([" +
+    utmZonesNorth +
+    utmZonesSouth +
+    utmZonesNorth.toLowerCase() +
+    utmZonesSouth.toLowerCase() +
+    "])[\\sEe]*(\\d+)[eE]*\\s+[Nn]*(\\d+)?[Nn]*$"
+  );
+}
+
 export function utmZone(
   coordinates: Coordinates
 ): Pick<Utm, "zoneNumber" | "zoneChar"> {

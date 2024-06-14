@@ -1,22 +1,11 @@
 import { ParseResult } from "./types";
-import { toLatLon } from "./mgrs";
+import { getMgrsRegExp, toLatLon } from "./mgrs";
+import { getUtmRegExp, utmToLatLon } from "./utm";
 
-const utmLetters = "NPQRSTUVWXXMLKJHGFEDC";
-const mgrsLettersNorthing = "ABCDEFGHJKLMNPQRSTUV";
-const mgrsLettersEasting = mgrsLettersNorthing + "WXYZ";
-const mgrsRegex =
-  "^(\\d{1,2})([" +
-  utmLetters +
-  utmLetters.toLowerCase() +
-  "])\\s*([" +
-  mgrsLettersEasting +
-  mgrsLettersEasting.toLowerCase() +
-  "]+[" +
-  mgrsLettersNorthing +
-  mgrsLettersNorthing.toLowerCase() +
-  "]+)\\s*(\\d{2,5})\\s+(\\d{2,5})?";
 export function tryParsePosition(input: string): ParseResult {
-  const mgrsMatch = input.match(mgrsRegex);
+  input = input.trim();
+
+  const mgrsMatch = input.match(getMgrsRegExp());
   if (mgrsMatch) {
     const zoneNumber = parseInt(mgrsMatch[1]);
     const zoneChar = mgrsMatch[2].toUpperCase();
@@ -30,6 +19,24 @@ export function tryParsePosition(input: string): ParseResult {
         zoneChar,
         zoneNumber,
         designator,
+        easting,
+        northing,
+      }),
+    };
+  }
+
+  const utmMatch = input.match(getUtmRegExp());
+  if (utmMatch) {
+    const zoneNumber = parseInt(utmMatch[1]);
+    const zoneChar = utmMatch[2].toUpperCase();
+    const easting = parseInt(utmMatch[3]);
+    const northing = parseInt(utmMatch[4]);
+
+    return {
+      isValid: true,
+      coordinates: utmToLatLon({
+        zoneChar,
+        zoneNumber,
         easting,
         northing,
       }),

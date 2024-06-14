@@ -1,7 +1,24 @@
 import { Coordinates, Mgrs, Utm } from "./types";
 import { toUtm, utmToLatLon } from "./utm";
 
-const DesignatorLetters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+const designatorLettersNorthing = "ABCDEFGHJKLMNPQRSTUV";
+const designatorLettersEasting = designatorLettersNorthing + "WXYZ";
+const utmLetters = "NPQRSTUVWXXMLKJHGFEDC";
+
+export function getMgrsRegExp(): string {
+  return (
+    "^(\\d{1,2})([" +
+    utmLetters +
+    utmLetters.toLowerCase() +
+    "])\\s*([" +
+    designatorLettersEasting +
+    designatorLettersEasting.toLowerCase() +
+    "]+[" +
+    designatorLettersNorthing +
+    designatorLettersNorthing.toLowerCase() +
+    "]+)\\s*(\\d{2,5})\\s+(\\d{2,5})?$"
+  );
+}
 
 function zoneOffsetForEasting(zoneNumber: number): number {
   return zoneNumber % 3 === 1 ? 0 : zoneNumber % 3 === 2 ? 8 : 16;
@@ -13,13 +30,17 @@ export function mgrsDesignator(utm: Omit<Utm, "zoneChar">): string {
     northingIndex += 5;
   }
 
-  const northingLetter = DesignatorLetters.charAt(northingIndex % 20);
+  const northingLetter = designatorLettersNorthing.charAt(
+    northingIndex % designatorLettersNorthing.length
+  );
 
   const eastingNoCorrection = Math.floor(utm.easting / 100000);
   const eastingIndex =
     eastingNoCorrection + zoneOffsetForEasting(utm.zoneNumber) - 1;
 
-  const eastingLetter = DesignatorLetters.charAt(eastingIndex % 24);
+  const eastingLetter = designatorLettersEasting.charAt(
+    eastingIndex % designatorLettersEasting.length
+  );
 
   return eastingLetter + northingLetter;
 }
@@ -37,7 +58,8 @@ export function toMgrs(coordinate: Coordinates): Mgrs {
 
 export function mgrsToUtm(mgrs: Mgrs): Utm {
   const northingLetter = mgrs.designator.charAt(1);
-  const indexOfNorthingLetter = DesignatorLetters.indexOf(northingLetter);
+  const indexOfNorthingLetter =
+    designatorLettersNorthing.indexOf(northingLetter);
   const numDesignatorNorthing =
     (indexOfNorthingLetter + 20 - (mgrs.zoneNumber % 2 === 0 ? 5 : 0)) % 20;
 
@@ -47,10 +69,10 @@ export function mgrsToUtm(mgrs: Mgrs): Utm {
     northing + Math.round((minNorthing - northing) / 2_000_000) * 2_000_000;
 
   const eastingZoneDiffs =
-    (DesignatorLetters.indexOf(mgrs.designator.charAt(0)) +
-      DesignatorLetters.length -
+    (designatorLettersEasting.indexOf(mgrs.designator.charAt(0)) +
+      designatorLettersEasting.length -
       zoneOffsetForEasting(mgrs.zoneNumber)) %
-    DesignatorLetters.length;
+    designatorLettersEasting.length;
   const easting = (eastingZoneDiffs + 1) * 100000 + mgrs.easting;
 
   return {

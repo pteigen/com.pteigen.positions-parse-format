@@ -1,4 +1,4 @@
 import { toPositionString } from "./positionFormatter";
-import { PositionFormat } from "./types";
+import { tryParsePosition } from "./positionParser";
 
-export { toPositionString, PositionFormat };
+export { toPositionString, tryParsePosition };
