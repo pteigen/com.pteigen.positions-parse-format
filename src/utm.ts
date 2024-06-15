@@ -1,5 +1,6 @@
 import { Coordinates, Utm } from "./types";
 import { degreesToRadians, radiansToDegrees } from "./geo";
+import { roundToNumDecimals } from "./util";
 
 const utmZonesNorth: string = "NPQRSTUVWXX";
 const utmZonesSouth: string = "MLKJHGFEDC";
@@ -141,8 +142,8 @@ export function utmCoordinates(
     northing += NORTHING_OFFFSET;
   }
   return {
-    easting: easting,
-    northing: northing,
+    easting: roundToNumDecimals(easting, 3),
+    northing: roundToNumDecimals(northing, 3),
   };
 }
 

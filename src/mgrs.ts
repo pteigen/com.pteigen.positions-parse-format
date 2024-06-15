@@ -16,7 +16,7 @@ export function getMgrsRegExp(): string {
     "]+[" +
     designatorLettersNorthing +
     designatorLettersNorthing.toLowerCase() +
-    "]+)\\s*(\\d{2,5})\\s+(\\d{2,5})?$"
+    "]+)\\s*(?:(?:(\\d{5})\\s*(\\d{5}))|(?:(\\d{4})\\s*(\\d{4}))|(?:(\\d{3})\\s*(\\d{3}))|(?:(\\d{2})\\s*(\\d{2})))$"
   );
 }
 

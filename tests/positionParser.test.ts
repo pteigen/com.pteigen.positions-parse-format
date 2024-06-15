@@ -1,5 +1,6 @@
-import { tryParsePosition } from "../src";
+import { toPositionString, tryParsePosition } from "../src";
 import { roundToNumDecimals } from "../src/util";
+import { PositionFormat } from "../src/types";
 
 test("MGRS 1", () => {
   const result = tryParsePosition("32U LC 56001 48827");
@@ -24,6 +25,42 @@ test("MGRS 2 - lowercase spaces", () => {
   if (result.isValid) {
     expect(roundToNumDecimals(result.coordinates.lon, 6)).toEqual(48.188505);
     expect(roundToNumDecimals(result.coordinates.lat, 6)).toEqual(-20.103542);
+  }
+});
+
+test("MGRS 3 - no spaces", () => {
+  const result = tryParsePosition("39KTT0600574580");
+  expect(result.isValid).toEqual(true);
+  if (result.isValid) {
+    expect(roundToNumDecimals(result.coordinates.lon, 6)).toEqual(48.188505);
+    expect(roundToNumDecimals(result.coordinates.lat, 6)).toEqual(-20.103542);
+  }
+});
+
+test("MGRS 3 - 4 digits", () => {
+  const result = tryParsePosition("39KTT0600 7458");
+  expect(result.isValid).toEqual(true);
+  if (result.isValid) {
+    expect(roundToNumDecimals(result.coordinates.lon, 6)).toEqual(48.188457);
+    expect(roundToNumDecimals(result.coordinates.lat, 6)).toEqual(-20.103541);
+  }
+});
+
+test("MGRS 4 - 3 digits", () => {
+  const result = tryParsePosition("39KTT060745");
+  expect(result.isValid).toEqual(true);
+  if (result.isValid) {
+    expect(roundToNumDecimals(result.coordinates.lon, 7)).toEqual(48.1884445);
+    expect(roundToNumDecimals(result.coordinates.lat, 6)).toEqual(-20.104263);
+  }
+});
+
+test("MGRS 4 - 2 digits", () => {
+  const result = tryParsePosition("39KTT0674");
+  expect(result.isValid).toEqual(true);
+  if (result.isValid) {
+    expect(roundToNumDecimals(result.coordinates.lon, 7)).toEqual(48.1883639);
+    expect(roundToNumDecimals(result.coordinates.lat, 6)).toEqual(-20.108776);
   }
 });
 
@@ -60,5 +97,15 @@ test("UTM 3", () => {
   if (result.isValid) {
     expect(roundToNumDecimals(result.coordinates.lon, 6)).toEqual(22.183862);
     expect(roundToNumDecimals(result.coordinates.lat, 6)).toEqual(-30.855079);
+  }
+});
+
+test("From string to string via coords", () => {
+  const result = tryParsePosition("39KTT0674");
+  console.log(result);
+  expect(result.isValid).toEqual(true);
+  if (result.isValid) {
+    const result2 = toPositionString(result.coordinates, PositionFormat.MGRS);
+    expect(result2).toEqual("39K TT 06000 74000");
   }
 });

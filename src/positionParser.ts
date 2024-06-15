@@ -10,8 +10,22 @@ export function tryParsePosition(input: string): ParseResult {
     const zoneNumber = parseInt(mgrsMatch[1]);
     const zoneChar = mgrsMatch[2].toUpperCase();
     const designator = mgrsMatch[3].toUpperCase();
-    const easting = parseInt(mgrsMatch[4]);
-    const northing = parseInt(mgrsMatch[5]);
+    const easting =
+      mgrsMatch[4] !== undefined
+        ? parseInt(mgrsMatch[4])
+        : mgrsMatch[6] !== undefined
+        ? 10 * parseInt(mgrsMatch[6])
+        : mgrsMatch[8] !== undefined
+        ? 100 * parseInt(mgrsMatch[8])
+        : 1000 * parseInt(mgrsMatch[10]);
+    const northing =
+      mgrsMatch[5] !== undefined
+        ? parseInt(mgrsMatch[5])
+        : mgrsMatch[7] !== undefined
+        ? 10 * parseInt(mgrsMatch[7])
+        : mgrsMatch[9] !== undefined
+        ? 100 * parseInt(mgrsMatch[9])
+        : 1000 * parseInt(mgrsMatch[11]);
 
     return {
       isValid: true,
