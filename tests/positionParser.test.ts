@@ -102,7 +102,6 @@ test("UTM 3", () => {
 
 test("From string to string via coords", () => {
   const result = tryParsePosition("39KTT0674");
-  console.log(result);
   expect(result.isValid).toEqual(true);
   if (result.isValid) {
     const result2 = toPositionString(result.coordinates, PositionFormat.MGRS);

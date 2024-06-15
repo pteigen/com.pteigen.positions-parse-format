@@ -6,6 +6,12 @@ function padLeftWithZero(input: number): string {
   return input.toString().padStart(5, "0");
 }
 
+/**
+ * Creates a string to represent different position formats.
+ * Prints UTM/MGRS with spaces for readability
+ * @param coordinates lat/lon
+ * @param format Desired format to print.
+ */
 export function toPositionString(
   coordinates: Coordinates,
   format: PositionFormat

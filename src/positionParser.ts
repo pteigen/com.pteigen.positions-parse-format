@@ -2,6 +2,11 @@ import { ParseResult } from "./types";
 import { getMgrsRegExp, toLatLon } from "./mgrs";
 import { getUtmRegExp, utmToLatLon } from "./utm";
 
+/**
+ * Takes input and tries to match that with a position format.
+ * Supports types/PositionFormat
+ * @param input A string containing the text to try to parse
+ */
 export function tryParsePosition(input: string): ParseResult {
   input = input.trim();
 

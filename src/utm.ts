@@ -1,6 +1,5 @@
 import { Coordinates, Utm } from "./types";
-import { degreesToRadians, radiansToDegrees } from "./geo";
-import { roundToNumDecimals } from "./util";
+import { degreesToRadians, radiansToDegrees, roundToNumDecimals } from "./util";
 
 const utmZonesNorth: string = "NPQRSTUVWXX";
 const utmZonesSouth: string = "MLKJHGFEDC";
